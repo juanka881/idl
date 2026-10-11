@@ -1,0 +1,3 @@
+server {
+    listener port=
+    route '/users' {

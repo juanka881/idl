@@ -1,0 +1,96 @@
+// Kitchen sink: valid syntax for the native Idle core. Values are syntax only.
+
+// A node can be empty, terminated by a newline, or separated by a semicolon.
+simple_empty
+semicolon_first; semicolon_second
+action login {}
+hyphenated-node property-name='value-with-symbols'
+
+// Header arguments precede properties. Names, symbols, and literal keywords
+// share broad word syntax, with meaning assigned by context.
+header_words action login dotted.path café_name namespace::entry nan inf and or
+keyword_properties true=false false=null null=true
+
+// Bare headers retain signed numbers and units. Expression signs are operators.
+numeric_header -42 -0xFF 3.125 30ms 1e3ms 1e 1em 0xFF 0Xff 0x10B 0x10ms 1e1000 1e-3
+header_values !flag !!other -30ms
+
+// Comments and continuations are spacing between header entries. Comment
+// delimiters inside a quoted value remain ordinary string content.
+commented_header before /* block comment
+    spanning a physical line */ after=2 text='// and /* are string content */'
+continued_header first \ /* optional block comment */ // continued onto the next line
+    second value=2
+
+// Annotations may repeat and may carry both arguments and properties.
+@meta 'kitchen' version=1
+@tag label='example'
+@tag enabled=true
+annotated target 'positional' active=true {
+    annotation_child
+}
+
+// Bodies may be empty, inline, or open on a later line after comments.
+empty_body {}
+inline_body { inline_child value=true }
+next_line_body label='across comments'
+
+// The body brace attaches after intervening blank lines and comments.
+/* body attachment comment */
+{
+    repeated_child id=1
+    repeated_child id=2
+    nested_body {
+        leaf enabled=true
+    }
+    final_child value=null
+}
+
+// Lists and calls preserve order, nesting, and trailing commas.
+collections empty_list=[] values=[1, 'two', true, null, [2, 3,],] multiline=[
+    first,
+    2,
+    inner(3, 4,),
+]
+calls empty=zero() dotted=math.clamp(1, base+2, 100,) nested=outer(inner(1), [2, 3,],) \
+    multiline=combine(
+        first,
+        nested(2),
+    )
+call_and_group foo(1) foo (1)
+
+// Strings cover all supported escapes, physical newlines, and both marked styles.
+strings empty='' escaped='slash\\ quote\' newline\n carriage\r tab\t back\b form\f smile\u{1F600}' physical='first line
+second line' markers='// /* not comments */'
+marked_strings inline_dedented=|'inline text' inline_folded= >'inline folded'
+multiline_strings dedented=|'
+    first
+    second
+      more-indented
+    last
+' folded=>'
+    first
+    second
+
+
+    third
+      indented code
+    last
+'
+
+// Operators are shown at every precedence level, with left-associative examples.
+operators prefix_plus=(+1) prefix_minus=(-2) prefix_not=(!flag) repeated_not=(!!flag) \
+    multiply=(8*2) divide=(8/2) remainder=(8%3) \
+    add=(1+2) subtract=(5-2) \
+    less=(1<2) less_equal=(1<=2) greater=(2>1) greater_equal=(2>=1) \
+    equal=(a==b) not_equal=(a!=b) logical_and=(true and false) logical_or=(false or true) \
+    precedence=(1+2*3) left_associative=(10-3-2) relational_chain=(1<2<3) grouped=(1) \
+    multiline_group=(
+        1+2
+    )
+
+// A greater-than operator can precede an operand-start folded-string marker.
+string_comparisons compact=(left>>'right') spaced=(left > >'right')
+
+// Nodes without a body remain distinct from nodes with an empty body.
+absent_body

@@ -1,0 +1,4 @@
+*.md text eol=lf
+
+# Fixture string-decoding assertions depend on stable physical line endings.
+dev/idl-lib/tests/fixtures/*.idl text eol=lf

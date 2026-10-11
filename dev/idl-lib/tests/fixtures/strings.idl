@@ -1,0 +1,10 @@
+message |'
+    first
+    second
+'
+folded >'
+    first
+    second
+
+    third
+'

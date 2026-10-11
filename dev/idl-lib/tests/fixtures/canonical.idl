@@ -1,0 +1,6 @@
+@deprecated 'Use UserV2'
+server 'api' host='0.0.0.0' port=8080 {
+    route '/users' method='GET' {
+        handler users.list
+    }
+}

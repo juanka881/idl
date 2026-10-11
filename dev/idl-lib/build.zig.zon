@@ -1,0 +1,15 @@
+.{
+    .name = .idl_lib,
+    .version = "0.1.0",
+    .fingerprint = 0x89c5fc6288b7d234,
+    .minimum_zig_version = "0.17.0",
+    .dependencies = .{},
+    .paths = .{
+        ".gitignore",
+        "build.zig",
+        "build.zig.zon",
+        "README.md",
+        "src",
+        "tests",
+    },
+}
