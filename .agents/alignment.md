@@ -571,3 +571,20 @@ Before: `moduleResolution: "node"` and explicit contributed activation events.
 
 After: compatible `Node16` module/resolution settings and contribution-derived
 activation, verified with the compiler and real Extension Host tests.
+
+### 15. Keep specifications in `docs/`
+
+**Issue:** The repository used the singular documentation directory name.
+
+**Correction:** Use the root `docs/` directory for specifications. Update links,
+repository maps, and plan references when moving the directory.
+
+**Why:** Follow the user's chosen repository layout and keep documentation easy
+to find through working links.
+
+**Scope:** Repository documentation paths and guidance; specification behavior
+is unchanged.
+
+Before: specifications lived in the singular documentation directory.
+
+After: `docs/idl-spec.md` and the companion specifications live under `docs/`.

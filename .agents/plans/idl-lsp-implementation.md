@@ -1,6 +1,6 @@
 # Phase 2: Idle LSP implementation
 
-Status: complete. Authority: `doc/idl-lsp-spec.md` and the
+Status: complete. Authority: `docs/idl-lsp-spec.md` and the
 approved Phase 2 plan. Check tasks only after implementation and applicable
 verification. Record evidence and unresolved limitations under each stage.
 

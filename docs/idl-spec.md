@@ -685,7 +685,7 @@ dev/
 ```
 
 Companions depend on the core; the core never imports them. This is the target
-layout, not implemented scaffolding. Specifications live in `doc/` at repository
+layout, not implemented scaffolding. Specifications live in `docs/` at repository
 root. Implementation plans live in `.agents/plans/`.
 
 Implement source/diagnostics/ownership, contextual scanning and literals, delimited

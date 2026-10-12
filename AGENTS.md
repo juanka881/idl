@@ -11,7 +11,7 @@ Read these before changing code:
 1. [Alignment log](.agents/alignment.md): the user's corrections, reasons, and
    before/after examples. Apply its current conventions throughout maintained
    source, tests, build files, and code examples.
-2. [Core specification](doc/idl-spec.md): the authority for language and core API
+2. [Core specification](docs/idl-spec.md): the authority for language and core API
    behavior. An implementation or plan must not silently override it.
 3. The relevant plan in [.agents/plans/](.agents/plans/). The
    [core implementation plan](.agents/plans/idl-core-implementation.md) is complete;
@@ -19,7 +19,7 @@ Read these before changing code:
 4. The package README: [core](dev/idl-lib/README.md),
    [language server](dev/idl-lsp/README.md), or
    [VS Code extension](dev/idl-vscode/README.md), for setup and verification.
-   LSP work also follows the [LSP specification](doc/idl-lsp-spec.md) and
+   LSP work also follows the [LSP specification](docs/idl-lsp-spec.md) and
    [Phase 2 checklist](.agents/plans/idl-lsp-implementation.md). The later
    [TypeScript alignment checklist](.agents/plans/idl-vscode-typescript-alignment.md)
    records the compiler, file layout, and test-mocking corrections.
@@ -52,13 +52,13 @@ specification contradictions explicitly before changing language behavior.
 | `dev/idl-vscode/src/editor/` | Snapshot coordinate mapping and VS Code adapter |
 | `dev/idl-vscode/tests/` | Unit tests mirroring source paths, helpers, and native integration tests |
 | `dev/idl-vscode/e2e/` | Real VS Code Extension Host tests and runner |
-| `doc/` | Core and companion specifications |
+| `docs/` | Core and companion specifications |
 | `.agents/plans/` | Implementation plans and their progress/completion records |
 | `.agents/alignment.md` | Running log of user corrections |
 | `mise.toml` | Pinned Zig, Node, and pnpm toolchains |
 
-The [C ABI](doc/idl-c-abi-spec.md), [WebAssembly](doc/idl-wasm-spec.md),
-[LSP](doc/idl-lsp-spec.md), and [schema](doc/idl-schema-spec.md) are separate
+The [C ABI](docs/idl-c-abi-spec.md), [WebAssembly](docs/idl-wasm-spec.md),
+[LSP](docs/idl-lsp-spec.md), and [schema](docs/idl-schema-spec.md) are separate
 specifications built on the core. The C ABI, WebAssembly adapter, and schema
 remain future work. The LSP server negotiates UTF-8 positions only; the VS Code
 extension converts UTF-16 editor coordinates at its boundary. Text synchronization
@@ -81,7 +81,7 @@ editor, evaluation, and schema concerns out of the core.
 - Work in plan order. Complete and review each stage before starting the next.
   For style corrections, apply one correction across the agreed scope, review it,
   and resolve gaps before moving to the next correction.
-- Keep plans in `.agents/plans/` and specifications in `doc/`. Update plan status
+- Keep plans in `.agents/plans/` and specifications in `docs/`. Update plan status
   with actual evidence; do not restart completed stages or claim checks that were
   not run. Use focused plans for new substantive milestones.
 - Record new user corrections in `.agents/alignment.md`, with a heading, issue,

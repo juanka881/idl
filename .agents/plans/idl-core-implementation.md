@@ -6,13 +6,13 @@ The core passes the package checks, external consumer run, and wasm32 compile ch
 ## Objective and sources of truth
 
 Implement an independently reusable Zig package in `dev/idl-lib`, exporting the
-module `idl`, from the [core specification](../../doc/idl-spec.md). Use Zig 0.17.0 from
+module `idl`, from the [core specification](../../docs/idl-spec.md). Use Zig 0.17.0 from
 the existing root `mise.toml`. Keep the specification authoritative if an example
 or implementation detail in this plan appears to disagree with it; resolve any
 real contradiction in the specification explicitly before changing behavior.
 
-The [C ABI](../../doc/idl-c-abi-spec.md), [WebAssembly](../../doc/idl-wasm-spec.md),
-[LSP](../../doc/idl-lsp-spec.md), and [schema](../../doc/idl-schema-spec.md) documents are
+The [C ABI](../../docs/idl-c-abi-spec.md), [WebAssembly](../../docs/idl-wasm-spec.md),
+[LSP](../../docs/idl-lsp-spec.md), and [schema](../../docs/idl-schema-spec.md) documents are
 consumer contracts. Do not implement those packages during this core task.
 
 Success means a tested, allocator-aware parser producing immutable, lossless,
