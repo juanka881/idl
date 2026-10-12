@@ -425,3 +425,149 @@ After:
 ```text
 feat(core): implement the Idle configuration language
 ```
+
+### 10. Track implementation tasks with checklists
+
+**Issue:** A prose-only implementation plan does not clearly distinguish pending
+work from completed, verified tasks during a staged implementation.
+
+**Correction:** Use Markdown task lists in the implementation plan. Check a task
+only after its work and applicable verification are complete. Record test evidence
+and review outcomes alongside stage completion, and leave unresolved tasks open.
+
+**Why:** The user and agents can see progress, resume accurately, and distinguish
+implemented work from work that still needs verification or review.
+
+**Scope:** The user explicitly requested checklist tracking for the Phase 2 LSP
+implementation plan. Retain this convention when maintaining that plan.
+
+Before:
+
+```markdown
+- Implement synchronization.
+- Review the stage.
+```
+
+After:
+
+```markdown
+- [x] Implement synchronization and pass its tests.
+- [ ] Complete independent review and resolve findings.
+```
+
+### 11. Use dash-case TypeScript filenames
+
+**Issue:** Camel-case filenames make the TypeScript package inconsistent with the
+user's preferred file naming convention.
+
+**Correction:** Use lowercase dash-case (kebab-case) for maintained TypeScript
+filenames, including tests, helpers, and end-to-end runners. Update imports,
+scripts, and documentation together. Keep conventional tool filenames such as
+`package.json` and `tsconfig.json`.
+
+**Why:** Consistent filenames make related modules easier to find and scan.
+
+**Scope:** TypeScript project files; this does not rename TypeScript identifiers
+or change Zig naming conventions.
+
+Before: `src/client/lspClient.ts`, `lspClient.test.ts`.
+
+After: `src/client/lsp-client.ts`, `lsp-client.test.ts`.
+
+### 12. Separate production, unit-test, and editor end-to-end code
+
+**Issue:** Tests and test helpers under `src/` mix production code with test-only
+code. A flat test folder also hides the relationship between modules and tests.
+
+**Correction:** Place `tests/` beside `src/`, with unit-test paths closely
+mirroring source paths. Move test-only helpers there as needed. Put tests that
+launch a real VS Code instance using `@vscode/test-electron`, including their
+runner, in a separate sibling `e2e/` directory. Keep native subprocess integration
+tests in a clearly identified integration directory within `tests/`.
+
+**Why:** The layout makes ownership and test scope clear, following the separate
+test-directory organization used by the Zig packages.
+
+**Scope:** The VS Code TypeScript package. The user's Zig comparison is applied
+as a layout model, not as a request to move existing Zig inline tests.
+
+Before:
+
+```text
+src/client/lspClient.ts
+src/test/lspClient.test.ts
+src/testing/fakeTransport.ts
+src/extension-test/runExtensionHost.ts
+```
+
+After:
+
+```text
+src/client/lsp-client.ts
+tests/client/lsp-client.test.ts
+tests/helpers/mock-transport.ts
+tests/integration/native-integration.test.ts
+e2e/run-extension-host.ts
+```
+
+### 13. Prefer Node test mocks to custom fake classes
+
+**Issue:** Reusable fake classes accumulate lifecycle flags, counters, and
+scenario options that duplicate behavior instead of expressing a test's needs.
+
+**Correction:** Use `node:test` mock functions/methods to replace behavior and
+inspect calls. Prefer test-context mocks for automatic isolation and cleanup.
+Configure failures, deferred results, and responses in the tests that need them.
+Small test-only helpers may wire listeners or deferred promises; do not replace
+a fake class with an equally complicated configurable fake object framework.
+
+**Why:** Tests should show the behavior they control and the outcome they verify,
+without maintaining another implementation of the component's state machine.
+
+**Scope:** TypeScript unit tests. Keep real transports/processes in integration
+and end-to-end tests, and preserve meaningful lifecycle and error-path coverage.
+
+Before:
+
+```typescript
+class FakeTransport {
+  shutdownCount = 0;
+
+  async shutdown(): Promise<void> {
+    this.shutdownCount += 1;
+  }
+}
+```
+
+After, inside a Node test receiving `context`:
+
+```typescript
+const shutdown = context.mock.fn(async (): Promise<void> => {});
+const transport = {
+  shutdown,
+};
+
+await transport.shutdown();
+assert.equal(shutdown.mock.callCount(), 1);
+```
+
+### 14. Resolve compiler and manifest warnings at their source
+
+**Issue:** The extension used TypeScript 5, legacy Node module resolution, and
+explicit activation events already implied by its VS Code contributions.
+
+**Correction:** For this upgrade, use the latest stable TypeScript release and
+compatible modern Node resolution; do not hide the reported deprecation with
+`ignoreDeprecations`. Remove redundant language/command activation declarations
+while preserving their contributions and lazy activation.
+
+**Why:** Configuration should remain usable with the selected compiler and avoid
+duplicating manifest information maintained elsewhere.
+
+**Scope:** This TypeScript upgrade and the editor warnings reported by the user.
+Version selection is verified when upgrading, rather than assuming a release.
+
+Before: `moduleResolution: "node"` and explicit contributed activation events.
+
+After: compatible `Node16` module/resolution settings and contribution-derived
+activation, verified with the compiler and real Extension Host tests.

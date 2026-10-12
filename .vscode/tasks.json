@@ -1,0 +1,32 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Idle: Build native server",
+      "type": "shell",
+      "command": "zig build",
+      "options": {
+        "cwd": "${workspaceFolder}/dev/idl-lsp"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Idle: Build extension",
+      "type": "shell",
+      "command": "pnpm run build",
+      "options": {
+        "cwd": "${workspaceFolder}/dev/idl-vscode"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Idle: Build server and extension",
+      "dependsOn": [
+        "Idle: Build native server",
+        "Idle: Build extension"
+      ],
+      "dependsOrder": "sequence",
+      "group": "build"
+    }
+  ]
+}

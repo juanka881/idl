@@ -1,0 +1,19 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Idle: Extension Development Host",
+      "type": "extensionHost",
+      "request": "launch",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}/dev/idl-vscode",
+        "--new-window",
+        "${workspaceFolder}"
+      ],
+      "outFiles": [
+        "${workspaceFolder}/dev/idl-vscode/out/src/**/*.js"
+      ],
+      "preLaunchTask": "Idle: Build server and extension"
+    }
+  ]
+}

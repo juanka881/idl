@@ -1,0 +1,218 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Idle",
+  "scopeName": "source.idle",
+  "patterns": [
+    {
+      "include": "#line-comments"
+    },
+    {
+      "include": "#block-comments"
+    },
+    {
+      "include": "#marked-literal-strings"
+    },
+    {
+      "include": "#marked-folded-strings"
+    },
+    {
+      "include": "#ordinary-strings"
+    },
+    {
+      "include": "#numbers"
+    },
+    {
+      "include": "#invalid-numbers"
+    },
+    {
+      "include": "#annotations"
+    },
+    {
+      "include": "#keywords"
+    },
+    {
+      "include": "#property-names"
+    },
+    {
+      "include": "#names"
+    },
+    {
+      "include": "#operators"
+    },
+    {
+      "include": "#punctuation"
+    }
+  ],
+  "repository": {
+    "line-comments": {
+      "name": "comment.line.double-slash.idle",
+      "begin": "//",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.definition.comment.idle"
+        }
+      },
+      "end": "(?=$)"
+    },
+    "block-comments": {
+      "name": "comment.block.idle",
+      "begin": "/\\*",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.definition.comment.begin.idle"
+        }
+      },
+      "end": "\\*/",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.comment.end.idle"
+        }
+      }
+    },
+    "marked-literal-strings": {
+      "name": "string.quoted.single.marked.literal.idle",
+      "begin": "(\\|)(')",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.string.marker.idle"
+        },
+        "2": {
+          "name": "punctuation.definition.string.begin.idle"
+        }
+      },
+      "end": "'",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.string.end.idle"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#string-escapes"
+        }
+      ]
+    },
+    "marked-folded-strings": {
+      "name": "string.quoted.single.marked.folded.idle",
+      "begin": "(>)(?=')(')",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.string.marker.idle"
+        },
+        "2": {
+          "name": "punctuation.definition.string.begin.idle"
+        }
+      },
+      "end": "'",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.string.end.idle"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#string-escapes"
+        }
+      ]
+    },
+    "ordinary-strings": {
+      "name": "string.quoted.single.idle",
+      "begin": "'",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.definition.string.begin.idle"
+        }
+      },
+      "end": "'",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.string.end.idle"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#string-escapes"
+        }
+      ]
+    },
+    "string-escapes": {
+      "patterns": [
+        {
+          "name": "constant.character.escape.idle",
+          "match": "\\\\(?:\\\\|'|n|r|t|b|f|u\\{[0-9A-Fa-f]{1,6}\\})"
+        },
+        {
+          "name": "invalid.illegal.escape.idle",
+          "match": "\\\\(?:u\\{[^}]*\\}|[^\\\\]|$)"
+        }
+      ]
+    },
+    "invalid-numbers": {
+      "comment": "Idle spec section 7 defines words by excluded punctuation and whitespace; malformed numeric words must not be split into numeric prefixes.",
+      "patterns": [
+        {
+          "name": "invalid.illegal.numeric.idle",
+          "match": "(?<![^\\s\\p{Z}\\p{Cc}'\"\\\\/()\\[\\]{}=;@,<>|+\\-*%!&^?~\\x{FEFF}])(?:[0-9]|\\.[0-9])[^\\s\\p{Z}\\p{Cc}'\"\\\\/()\\[\\]{}=;@,<>|+\\-*%!&^?~\\x{FEFF}]*"
+        }
+      ]
+    },
+    "numbers": {
+      "name": "constant.numeric.idle",
+      "comment": "The same spec section 7 word-boundary class guards both ends of complete numeric tokens.",
+      "match": "(?<![^\\s\\p{Z}\\p{Cc}'\"\\\\/()\\[\\]{}=;@,<>|+\\-*%!&^?~\\x{FEFF}])(?>(?:0[xX][0-9A-Fa-f]+|(?!(?:0[xX]))(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?))[A-Za-z]*(?![^\\s\\p{Z}\\p{Cc}'\"\\\\/()\\[\\]{}=;@,<>|+\\-*%!&^?~\\x{FEFF}])"
+    },
+    "annotations": {
+      "name": "entity.name.tag.annotation.idle",
+      "match": "@[\\p{L}_][\\p{L}\\p{N}_.:-]*",
+      "captures": {
+        "0": {
+          "name": "entity.name.tag.annotation.idle"
+        }
+      }
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name": "constant.language.boolean.idle",
+          "match": "\\b(?:true|false)\\b"
+        },
+        {
+          "name": "constant.language.null.idle",
+          "match": "\\bnull\\b"
+        },
+        {
+          "name": "keyword.operator.logical.idle",
+          "match": "\\b(?:and|or)\\b"
+        }
+      ]
+    },
+    "property-names": {
+      "name": "variable.other.property.idle",
+      "match": "(?<![\\p{L}\\p{N}_])[\\p{L}_][\\p{L}\\p{N}_.:-]*(?:-[\\p{L}\\p{N}_.:-]+)?(?=[ \\t]*=(?!=))"
+    },
+    "names": {
+      "name": "variable.other.idle",
+      "match": "(?<![\\p{L}\\p{N}_])[\\p{L}_][\\p{L}\\p{N}_.:-]*(?:-[\\p{L}\\p{N}_.:-]+)?"
+    },
+    "operators": {
+      "name": "keyword.operator.idle",
+      "match": "(?:==|!=|<=|>=|[+*/%<>!-])"
+    },
+    "punctuation": {
+      "patterns": [
+        {
+          "name": "punctuation.separator.key-value.idle",
+          "match": "=(?!=)"
+        },
+        {
+          "name": "punctuation.section.delimiter.idle",
+          "match": "[{}\\[\\](),;]"
+        },
+        {
+          "name": "punctuation.separator.annotation.idle",
+          "match": "@"
+        }
+      ]
+    }
+  }
+}

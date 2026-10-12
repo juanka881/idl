@@ -16,8 +16,13 @@ Read these before changing code:
 3. The relevant plan in [.agents/plans/](.agents/plans/). The
    [core implementation plan](.agents/plans/idl-core-implementation.md) is complete;
    its stages, conformance matrix, and completion record explain the existing core.
-4. [Package README](dev/idl-lib/README.md): dependency setup, public API use,
-   ownership, and verification commands.
+4. The package README: [core](dev/idl-lib/README.md),
+   [language server](dev/idl-lsp/README.md), or
+   [VS Code extension](dev/idl-vscode/README.md), for setup and verification.
+   LSP work also follows the [LSP specification](doc/idl-lsp-spec.md) and
+   [Phase 2 checklist](.agents/plans/idl-lsp-implementation.md). The later
+   [TypeScript alignment checklist](.agents/plans/idl-vscode-typescript-alignment.md)
+   records the compiler, file layout, and test-mocking corrections.
 
 Current user instructions take precedence over repository guidance. Resolve real
 specification contradictions explicitly before changing language behavior.
@@ -36,17 +41,29 @@ specification contradictions explicitly before changing language behavior.
 | `dev/idl-lib/src/literals.zig` | String validation, layout, and decoding |
 | `dev/idl-lib/src/parser.zig` | Expressions, nodes, annotations, and recovery |
 | `dev/idl-lib/tests/` | Public conformance, ownership tests, and IDL fixtures |
+| `dev/idl-lsp/` | Standalone Zig stdio language server, using the public core API |
+| `dev/idl-lsp/src/session.zig` | LSP lifecycle and document notifications |
+| `dev/idl-lsp/src/documents.zig` | Versioned snapshots and transactional edits |
+| `dev/idl-lsp/src/positions.zig` | Physical line index and UTF-8 edit position mapping |
+| `dev/idl-lsp/src/diagnostics.zig` | Core diagnostic translation and span boundary mapping |
+| `dev/idl-vscode/` | TypeScript extension and editor integration tests |
+| `dev/idl-vscode/src/client/` | Editor-independent RPC and LSP client lifecycle |
+| `dev/idl-vscode/src/transport/` | Framing and native process transport |
+| `dev/idl-vscode/src/editor/` | Snapshot coordinate mapping and VS Code adapter |
+| `dev/idl-vscode/tests/` | Unit tests mirroring source paths, helpers, and native integration tests |
+| `dev/idl-vscode/e2e/` | Real VS Code Extension Host tests and runner |
 | `doc/` | Core and companion specifications |
 | `.agents/plans/` | Implementation plans and their progress/completion records |
 | `.agents/alignment.md` | Running log of user corrections |
-| `mise.toml` | Pinned Zig toolchain |
+| `mise.toml` | Pinned Zig, Node, and pnpm toolchains |
 
 The [C ABI](doc/idl-c-abi-spec.md), [WebAssembly](doc/idl-wasm-spec.md),
 [LSP](doc/idl-lsp-spec.md), and [schema](doc/idl-schema-spec.md) are separate
-specifications built on the core. They are not implemented by the completed core
-plan. Follow their specified `dev/` locations when those tasks are requested.
-The LSP design negotiates UTF-8 positions only; no UTF-16 fallback is planned for
-its initial implementation.
+specifications built on the core. The C ABI, WebAssembly adapter, and schema
+remain future work. The LSP server negotiates UTF-8 positions only; the VS Code
+extension converts UTF-16 editor coordinates at its boundary. Text synchronization
+is incremental; parsing still processes each full accepted snapshot. Keep protocol,
+editor, evaluation, and schema concerns out of the core.
 
 ## Implementation and review workflow
 
@@ -97,6 +114,16 @@ The alignment log contains the detailed examples. In summary:
 - Declare used standard-library types and namespaces as file-level aliases, such
   as `Allocator`, `ArrayList`, `testing`, and `mem`. Keep full dependency paths in
   the alias declarations. Avoid unused aliases and naming collisions.
+- Apply these readability rules to TypeScript as well: named conditions, early
+  guards, explicit blocks, named return objects, multiline initializers, and
+  logical spacing. Use normal named/type imports instead of repeated inline
+  import paths. Keep maintained TypeScript filenames in lowercase dash-case.
+- Keep TypeScript tests outside `src/`: unit tests in sibling `tests/` mirroring
+  source directories, reusable helpers under `tests/helpers/`, native subprocess
+  tests under `tests/integration/`, and real VS Code tests under sibling `e2e/`.
+- Prefer test-context `node:test` mocks over custom fake classes and scenario
+  frameworks. Configure behavior in the test that needs it and retain meaningful
+  failure/lifecycle assertions. Real integration tests keep real processes.
 
 Preserve document-owned source and arena lifetime, immutable published syntax,
 UTF-8 byte spans, lossless real-token/trivia coverage, recoverable malformed input,
@@ -114,6 +141,29 @@ zig fmt --check build.zig build.zig.zon src tests
 zig build test --summary all
 zig build test -Doptimize=ReleaseSafe --summary all
 ```
+
+Run the same checks from `dev/idl-lsp`, then `zig build` to produce the executable.
+Use the Node and pnpm versions pinned in `mise.toml` for `dev/idl-vscode`:
+
+```text
+pnpm install --frozen-lockfile
+pnpm run typecheck
+pnpm test
+```
+
+Use the package's pinned TypeScript compiler. Keep module/resolution settings
+compatible with it and fix deprecated configuration instead of silencing it.
+Contributed Idle language and command declarations provide VS Code activation;
+do not duplicate their implicit activation events.
+
+After building the server, `pnpm run test:native` exercises its actual subprocess.
+`pnpm run test:extension` uses an installed VS Code executable selected through
+`VSCODE_EXECUTABLE_PATH`; the extension README documents this setup. Tests use
+isolated workspaces and profiles, and must not alter the user's editor profile.
+Preserve the modular
+stdlib/Node-built-in protocol client; do not add a runtime language-client
+dependency or silently enable UTF-16 server fallback. Keep tests for lifecycle
+races, stale diagnostics, and Unicode coordinates when changing these layers.
 
 The environment may restrict the default Zig cache. In PowerShell, from the
 package directory, use the ignored package-local caches:

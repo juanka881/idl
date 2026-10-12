@@ -1,0 +1,73 @@
+{
+  "name": "idl-vscode",
+  "displayName": "Idle Language Support",
+  "description": "Language support for Idle configuration files.",
+  "version": "0.1.0",
+  "type": "commonjs",
+  "publisher": "idle-lang",
+  "engines": {
+    "vscode": "^1.141.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "main": "./out/src/extension.js",
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": false
+    }
+  },
+  "contributes": {
+    "commands": [
+      {
+        "command": "idle.restartLanguageServer",
+        "title": "Idle: Restart Language Server"
+      }
+    ],
+    "configuration": {
+      "title": "Idle",
+      "properties": {
+        "idle.serverPath": {
+          "type": "string",
+          "default": "",
+          "description": "Absolute path to the idl-lsp executable."
+        }
+      }
+    },
+    "languages": [
+      {
+        "id": "idle",
+        "aliases": [
+          "Idle",
+          "idle"
+        ],
+        "extensions": [
+          ".idl"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "idle",
+        "scopeName": "source.idle",
+        "path": "./syntaxes/idle.tm-language.json"
+      }
+    ]
+  },
+  "scripts": {
+    "build": "tsc --project tsconfig.json",
+    "typecheck": "tsc --noEmit --project tsconfig.json",
+    "test": "pnpm run build && node --test --test-isolation=none \"out/tests/{client,editor,transport,syntaxes}/**/*.test.js\"",
+    "test:native": "pnpm run build && node --test --test-isolation=none out/tests/integration/native-integration.test.js",
+    "test:extension": "pnpm run build && node out/e2e/run-extension-host.js"
+  },
+  "devDependencies": {
+    "@types/node": "^26.0.0",
+    "@types/vscode": "^1.140.0",
+    "@vscode/test-electron": "^3.1.0",
+    "typescript": "7.0.2",
+    "vscode-oniguruma": "^2.0.1",
+    "vscode-textmate": "^9.3.2"
+  }
+}
